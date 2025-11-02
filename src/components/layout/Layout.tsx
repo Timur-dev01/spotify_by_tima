@@ -6,41 +6,41 @@ import { Button } from "../ui/button";
 
 const Layout: React.FC = () => {
   const [token, setToken] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const hash = window.location.hash;
-    let _token = window.localStorage.getItem("token");
+    const _token = localStorage.getItem("token");
 
-    // если нет токена — достаём из URL
-    if (!_token && hash) {
-      _token =
-        hash
-          .substring(1)
-          .split("&")
-          .find((el) => el.startsWith("access_token"))
-          ?.split("=")[1] ?? null;
-
-      window.location.hash = "";
-      if (_token) {
-        window.localStorage.setItem("token", _token);
-        setToken(_token);
-      }
-    } else {
+    if (_token) {
       setToken(_token);
+    } else {
+      console.warn("⚠️ Токен не найден. Нужно авторизоваться.");
     }
   }, []);
 
   useEffect(() => {
-    if (token) {
-      fetch("https://api.spotify.com/v1/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    if (!token) return;
+
+    fetch("https://api.spotify.com/v1/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Spotify API Error: ${res.status}`);
+        }
+        return res.json();
       })
-        .then((res) => res.json())
-        .then((data) => console.log("✅ USER DATA:", data))
-        .catch((err) => console.error("Ошибка:", err));
-    }
+      .then((data) => {
+        console.log("🎧 USER DATA:", data);
+        setUser(data);
+      })
+      .catch((err) => {
+        console.error("❌ Ошибка при получении данных:", err);
+        localStorage.removeItem("token");
+        setToken(null);
+      });
   }, [token]);
 
   return (
@@ -51,11 +51,12 @@ const Layout: React.FC = () => {
             <img
               className="w-10 h-10"
               src="https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_White.png"
-              alt=""
+              alt="Spotify Logo"
             />
             <Link to="/">
               <Home color="white" size={35} />
             </Link>
+
             <div className="relative w-72">
               <Search
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -68,7 +69,20 @@ const Layout: React.FC = () => {
               />
             </div>
           </div>
-          <div className="flex gap-5">
+
+          <div className="flex gap-5 items-center">
+            {user ? (
+              <div className="flex items-center gap-3">
+                <img
+                  src={user.images?.[0]?.url}
+                  alt={user.display_name}
+                  className="w-8 h-8 rounded-full"
+                />
+                <span>{user.display_name}</span>
+              </div>
+            ) : (
+              <span className="text-gray-400 text-sm">Не авторизован</span>
+            )}
             <Button>Узнать больше о Premium</Button>
             <Users color="white" />
             <Bell color="white" />
