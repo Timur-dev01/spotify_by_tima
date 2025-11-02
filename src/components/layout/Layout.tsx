@@ -1,44 +1,86 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Link, Outlet } from "react-router";
+import { Bell, Home, Search, Users } from "lucide-react";
+import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Card, CardContent } from "../ui/card";
 
-const Login: React.FC = () => {
-  const CLIENT_ID = "9d701d9a4e994bd59228319abc5c5fbf";
-  const REDIRECT_URI = "https://spotify-copy-by-tima.netlify.app/"; // Netlify
-  const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
-  const RESPONSE_TYPE = "token"; //
-  const SCOPE = "user-read-private user-read-email playlist-modify-public";
+const Layout: React.FC = () => {
+  const [token, setToken] = useState<string | null>(null);
 
-  const loginUrl = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
-    REDIRECT_URI
-  )}&response_type=${RESPONSE_TYPE}&scope=${encodeURIComponent(SCOPE)}`;
+  useEffect(() => {
+    const hash = window.location.hash;
+    let _token = window.localStorage.getItem("token");
+
+    // если нет токена — достаём из URL
+    if (!_token && hash) {
+      _token =
+        hash
+          .substring(1)
+          .split("&")
+          .find((el) => el.startsWith("access_token"))
+          ?.split("=")[1] ?? null;
+
+      window.location.hash = "";
+      if (_token) {
+        window.localStorage.setItem("token", _token);
+        setToken(_token);
+      }
+    } else {
+      setToken(_token);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      fetch("https://api.spotify.com/v1/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => console.log("✅ USER DATA:", data))
+        .catch((err) => console.error("Ошибка:", err));
+    }
+  }, [token]);
 
   return (
-    <div className="min-h-screen bg-[#121212] flex items-center justify-center text-white">
-      <Card className="bg-[#181818] p-10 rounded-2xl shadow-lg w-[380px] text-center border-none">
-        <CardContent>
-          <div className="flex flex-col items-center gap-6">
+    <>
+      <header className="bg-[#000000] pt-5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-5">
             <img
+              className="w-10 h-10"
               src="https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_White.png"
-              alt="Spotify"
-              className="w-36 mx-auto mb-6"
+              alt=""
             />
-
-            <h1 className="text-3xl font-bold mb-3">Войти в Spotify</h1>
-            <p className="text-gray-400 mb-6 text-sm">
-              Подключитесь к своему аккаунту, чтобы продолжить.
-            </p>
-
-            <a href={loginUrl}>
-              <Button className="bg-green-500 hover:bg-green-400 text-black font-semibold py-2 px-6 rounded-full transition-transform duration-200 hover:scale-105">
-                Войти с помощью Spotify
-              </Button>
-            </a>
+            <Link to="/">
+              <Home color="white" size={35} />
+            </Link>
+            <div className="relative w-72">
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                color="white"
+              />
+              <Input
+                type="text"
+                placeholder="Что хочешь включить"
+                className="pl-12"
+              />
+            </div>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+          <div className="flex gap-5">
+            <Button>Узнать больше о Premium</Button>
+            <Users color="white" />
+            <Bell color="white" />
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <Outlet />
+      </main>
+    </>
   );
 };
 
-export default Login;
+export default Layout;
