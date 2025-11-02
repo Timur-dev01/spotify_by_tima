@@ -4,16 +4,11 @@ import { Card, CardContent } from "../ui/card";
 
 const Login: React.FC = () => {
   const spotify = {
-    client_id: "cf26c0bc0eb44c62bbcc52c1b00b9b03",
-    REDIRECT_URI: "http://localhost:5173/",
+    client_id: "ac881a80750e4bf6a0c7384d632567c7",
+    REDIRECT_URI: "http://10.187.25.106:5173/",
     AUTH_ENDPOINT: "https://accounts.spotify.com/authorize",
     RESPONSE_TYPE: "token",
-    SCOPE: "playlist-modify-public user-read-private user-read-email",
-  };
-
-  const handleLogin = () => {
-    const authUrl = `${spotify.AUTH_ENDPOINT}?client_id=${spotify.client_id}&redirect_uri=${spotify.REDIRECT_URI}&response_type=${spotify.RESPONSE_TYPE}&scope=${spotify.SCOPE}`;
-    window.location.href = authUrl;
+    token: "",
   };
 
   return (
@@ -32,12 +27,13 @@ const Login: React.FC = () => {
               Подключитесь к своему аккаунту, чтобы продолжить.
             </p>
 
-            <Button
-              onClick={handleLogin}
-              className="bg-green-500 hover:bg-green-400 text-black font-semibold py-2 px-6 rounded-full transition-transform duration-200 hover:scale-105"
+            <a
+              href={`${spotify.AUTH_ENDPOINT}?client_id=${spotify.client_id}&redirect_uri=${spotify.REDIRECT_URI}&response_type=${spotify.RESPONSE_TYPE}&scope=playlist-modify-public`}
             >
-              Войти с помощью Spotify
-            </Button>
+              <Button className="bg-green-500 hover:bg-green-400 text-black font-semibold py-2 px-6 rounded-full transition-transform duration-200 hover:scale-105">
+                Войти с помощью Spotify
+              </Button>
+            </a>
           </div>
         </CardContent>
       </Card>

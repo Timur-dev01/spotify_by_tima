@@ -5,16 +5,13 @@ import Home from "./components/pages/Home";
 
 function App() {
   return (
-    <>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route path="/" element={<Home />} />
-        </Route>
-        <Route path="/">
-          <Route path="/login" element={<Login />} />
-        </Route>
-      </Routes>
-    </>
+    <Routes>
+      <Route element={<Layout />}>  
+        <Route path="/" element={<Home />} />
+      </Route>
+
+      <Route path="/login" element={<Login />} />
+    </Routes>
   );
 }
 

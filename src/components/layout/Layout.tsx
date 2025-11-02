@@ -4,6 +4,24 @@ import { Link, Outlet } from "react-router";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 
+async function fetchUserData(token: string) {
+  try {
+    const res = await fetch("https://api.spotify.com/v1/me/", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) throw new Error(res.statusText);
+
+    const data = await res.json();
+
+    console.log(data);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 const Layout: React.FC = () => {
   useEffect(() => {
     const hash = window.location.hash;
@@ -19,6 +37,12 @@ const Layout: React.FC = () => {
 
       window.location.hash = "";
       window.localStorage.setItem("token", token || "");
+    }
+
+    if (token) {
+      fetchUserData(token);
+    } else {
+      console.warn("Токен отсутствует, пользователь не авторизован");
     }
   }, []);
 
@@ -36,7 +60,10 @@ const Layout: React.FC = () => {
               <Home color="white" size={35}></Home>
             </Link>
             <div className="relative w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" color="white"></Search>
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                color="white"
+              ></Search>
               <Input
                 type="text"
                 placeholder="Что хочешь включить"
@@ -54,9 +81,7 @@ const Layout: React.FC = () => {
       <main>
         <Outlet />
       </main>
-      <footer className="fix bottom-0 bg-black">
-        
-      </footer>
+      <footer className="fix bottom-0 bg-black"></footer>
     </>
   );
 };
