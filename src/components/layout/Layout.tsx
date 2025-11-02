@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router";
-import { Bell, Home, Search, Users } from "lucide-react";
+import { Home, Search } from "lucide-react";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
 
 const CLIENT_ID = "9d701d9a4e994bd59228319abc5c5fbf";
 const REDIRECT_URI = "https://spotify-copy-by-tima.netlify.app/";
