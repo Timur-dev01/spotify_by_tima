@@ -1,50 +1,47 @@
-import { Bell, Home, Search, Users } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router";
+import { Bell, Home, Search, Users } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 
-async function fetchUserData(token: string) {
-  try {
-    const res = await fetch("https://api.spotify.com/v1/me/", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!res.ok) throw new Error(res.statusText);
-
-    const data = await res.json();
-
-    console.log(data);
-  } catch (e) {
-    console.log(e);
-  }
-}
-
 const Layout: React.FC = () => {
+  const [token, setToken] = useState<string | null>(null);
+
   useEffect(() => {
     const hash = window.location.hash;
-    let token = window.localStorage.getItem("token");
+    let _token = window.localStorage.getItem("token");
 
-    if (!token && hash) {
-      token =
+    // если нет токена — достаём из URL
+    if (!_token && hash) {
+      _token =
         hash
-          ?.substring(1)
-          ?.split("&")
-          ?.find((el) => el.startsWith("access_token"))
+          .substring(1)
+          .split("&")
+          .find((el) => el.startsWith("access_token"))
           ?.split("=")[1] ?? null;
 
       window.location.hash = "";
-      window.localStorage.setItem("token", token || "");
-    }
-
-    if (token) {
-      fetchUserData(token);
+      if (_token) {
+        window.localStorage.setItem("token", _token);
+        setToken(_token);
+      }
     } else {
-      console.warn("Токен отсутствует, пользователь не авторизован");
+      setToken(_token);
     }
   }, []);
+
+  useEffect(() => {
+    if (token) {
+      fetch("https://api.spotify.com/v1/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => console.log("✅ USER DATA:", data))
+        .catch((err) => console.error("Ошибка:", err));
+    }
+  }, [token]);
 
   return (
     <>
@@ -57,13 +54,13 @@ const Layout: React.FC = () => {
               alt=""
             />
             <Link to="/">
-              <Home color="white" size={35}></Home>
+              <Home color="white" size={35} />
             </Link>
             <div className="relative w-72">
               <Search
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                 color="white"
-              ></Search>
+              />
               <Input
                 type="text"
                 placeholder="Что хочешь включить"
@@ -73,15 +70,15 @@ const Layout: React.FC = () => {
           </div>
           <div className="flex gap-5">
             <Button>Узнать больше о Premium</Button>
-            <Users color="white"></Users>
-            <Bell color="white"></Bell>
+            <Users color="white" />
+            <Bell color="white" />
           </div>
         </div>
       </header>
+
       <main>
         <Outlet />
       </main>
-      <footer className="fix bottom-0 bg-black"></footer>
     </>
   );
 };
