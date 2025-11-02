@@ -7,7 +7,7 @@ const Login: React.FC = () => {
     client_id: "6df38a057eaf46409153bdba9f62e85b",
     REDIRECT_URI: "https://timur-dev01.github.io/spotify_by_tima/",
     AUTH_ENDPOINT: "https://accounts.spotify.com/authorize",
-    RESPONSE_TYPE: "code",
+    RESPONSE_TYPE: "token",
     token: ""
   };
 
