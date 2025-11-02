@@ -4,11 +4,11 @@ import { Card, CardContent } from "../ui/card";
 
 const Login: React.FC = () => {
   const spotify = {
-    client_id: "ac881a80750e4bf6a0c7384d632567c7",
-    REDIRECT_URI: "http://10.187.25.106:5173/",
+    client_id: "6df38a057eaf46409153bdba9f62e85b",
+    REDIRECT_URI: "https://timur-dev01.github.io/spotify_by_tima/",
     AUTH_ENDPOINT: "https://accounts.spotify.com/authorize",
-    RESPONSE_TYPE: "token",
-    token: "",
+    RESPONSE_TYPE: "code",
+    token: ""
   };
 
   return (
@@ -24,7 +24,7 @@ const Login: React.FC = () => {
 
             <h1 className="text-3xl font-bold mb-3">Войти в Spotify</h1>
             <p className="text-gray-400 mb-6 text-sm">
-              Подключитесь к своему аккаунту, чтобы продолжить.
+              Подключитесь к своему аккаунту, чтобы продолжить. 
             </p>
 
             <a
