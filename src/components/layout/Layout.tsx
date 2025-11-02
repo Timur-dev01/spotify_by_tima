@@ -3,10 +3,10 @@ import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 
 const Login: React.FC = () => {
-  const CLIENT_ID = "6df38a057eaf46409153bdba9f62e85b";
+  const CLIENT_ID = "9d701d9a4e994bd59228319abc5c5fbf";
   const REDIRECT_URI = "https://spotify-copy-by-tima.netlify.app/"; // Netlify
   const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
-  const RESPONSE_TYPE = "token"; // ❗️ Важно: только token
+  const RESPONSE_TYPE = "token"; //
   const SCOPE = "user-read-private user-read-email playlist-modify-public";
 
   const loginUrl = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
